@@ -97,26 +97,22 @@ SC_MODULE(memory) {
 			int addr = addr_bi.read();
 			int core_num = (addr >> 16) & 0x000000ff;
 			if (core_num == 1)
-			{
 				data_len.write(core1_i_size);
-			}
 			if (core_num == 2)
-			{
 				data_len.write(core2_i_size);
-			}
+			if (core_num == 3)
+				data_len.write(corelast_i_size);
 		}
 		if (wr_len_o.read())
 		{
 			int addr = addr_bi.read();
 			int core_num = (addr >> 16) & 0x000000ff;
 			if (core_num == 1)
-			{
 				data_len.write(core1_o_size);
-			}
 			if (core_num == 2)
-			{
 				data_len.write(core2_o_size);
-			}
+			if (core_num == 3)
+				data_len.write(corelast_o_size);
 		}
 	}
 

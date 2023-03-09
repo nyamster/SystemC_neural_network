@@ -169,6 +169,18 @@ SC_MODULE(bus) {
 		//-------------------------------------------------------------------------------------
 		//	ПОСЛЕДНЕЕ ЯДРО
 		//-------------------------------------------------------------------------------------
+		// wr_o_core2.write(1);
+		while (!rd_i_corelast.read()) wait();
+		addr_o_mem.write(addr_i_corelast.read());
+		wr_len_o_mem.write(1);
+		wait();
+		wr_len_o_mem.write(0);
+		wait();
+		data_ow_corelast.write(data_len_i_mem.read());
+		int corelast_inp_len = data_len_i_mem.read();
+		// wr_o_core2.write(0);
+		wait();
+
 		for (int i = 0; i < corelast_o_size; i++)
 		{
 			for (int j = 0; j < corelast_i_size; j++)

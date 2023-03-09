@@ -94,7 +94,7 @@ SC_MODULE(core) {
 	}
 	//core main thread
 	void weight_read() {
-		for (int i = 0; i < (core_num - 1) * 4000; i++) wait();
+		// for (int i = 0; i < (core_num - 1) * 4000; i++) wait();
 
 		while (!(wr_ci.read()))
 		{

@@ -55,7 +55,7 @@ SC_MODULE(core_last) {
 	{
 		while (!(wr_ci.read()/* && wr_ci[1].read() && wr_ci[2].read()*/)) wait();
 		{
-			for (int i = 0; i < corelast_i_size; i++)
+			for (int i = 0; i < inp_len; i++)
 			{
 				int addr = (out_addr + cores_count) << 8;
 				addr |= i;
@@ -78,7 +78,7 @@ SC_MODULE(core_last) {
 			for (int i(0); i < corelast_o_size; i++)
 			{
 				prediction[i] = 0;
-				for (int j(0); j < corelast_i_size; j++)
+				for (int j(0); j < inp_len; j++)
 				{
 					prediction[i] += data_neuron[j] * weight[i][j];
 				}
@@ -92,9 +92,21 @@ SC_MODULE(core_last) {
 	//core main thread
 	void weight_read() {
 		for (int i = 0; i < 10000; i++) wait();
+
+		int addr = (cores_count+1) << 16;
+		addr_bo.write(addr);
+		rd_bo.write(1);
+		wait();
+		wait();
+		rd_bo.write(0);
+		wait();
+		wait();
+		inp_len = data_bi.read();
+		cout << "INPUT LEN: " << inp_len << " " << (cores_count+1) << endl;
+
 		for (int i(0); i < corelast_o_size; i++)
 		{
-			for (int j = 0; j < corelast_i_size; j++)
+			for (int j = 0; j < inp_len; j++)
 			{
 				int addr = (i+weight_base_addr*(cores_count+1)) << 8;
 				// cout << i+weight_base_addr*(cores_count+1) << endl;
@@ -149,6 +161,7 @@ private:
 	vector<vector<float>> weight;
 	vector<float> data_neuron;
 	vector<float> prediction;
+	int inp_len;
 };
 
 
