@@ -72,18 +72,18 @@ SC_MODULE(memory) {
 
 		ifstream fin2("data/weight.txt");
 		while (!fin2.eof()) {
-			for (int i(0); i < 10; i++)
-				for (int j(0); j < 49; j++)
+			for (int i(0); i < core1_o_size; i++)
+				for (int j(0); j < core1_i_size; j++)
 				{
 					fin2 >> mem[i+weight_base_addr][j];
 				}
-			for (int i(0); i < 5; i++)
-				for (int j(0); j < 10; j++)
+			for (int i(0); i < core2_o_size; i++)
+				for (int j(0); j < core2_i_size; j++)
 				{
 					fin2 >> mem[i+weight_base_addr*2][j];
 				}
-			for (int i(0); i < 3; i++)
-				for (int j(0); j < 5; j++)
+			for (int i(0); i < corelast_o_size; i++)
+				for (int j(0); j < corelast_i_size; j++)
 				{
 					fin2 >> mem[i+weight_base_addr*3][j];
 				}
