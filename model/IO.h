@@ -12,16 +12,15 @@
 #define weight_base_addr 49
 #define out_addr 5
 
-#define cores_count 2
+#define cores_count 1
 
-#define core1_i_size 49
-#define core1_o_size 10
-
-#define core2_i_size 10
-#define core2_o_size 5
-
-#define corelast_i_size 5
+#define corelast_i_size 30
 #define corelast_o_size 3
+
+const int cores_i_size[] = {49};
+const int cores_o_size[] = {30};
+
+const std::string filename = "data/weight_old.txt";
 
 #define for_data() for(int i(0); i < data_dim; i++)
 #define for_train() for(int i(0); i < train_dim; i++)

@@ -14,7 +14,7 @@ int sc_main(int argc, char* argv[]) {
 
 	IO IO("IOput");
 	bus bus("bus");
-	core core1("core1"),core2("core2");//,core3("core3");
+	// core core1("core1"),core2("core2");//,core3("core3");
 	sc_vector<core>cores("core",cores_count);
 	core_last core_last("core_last");
 	memory memory("memory");
@@ -28,26 +28,6 @@ int sc_main(int argc, char* argv[]) {
 	sc_signal<bool> rd_bo_IO;	
 	sc_signal<bool> wr_bo_IO;						
 	sc_signal<int>  addr_bo_IO;
-
-	sc_signal<bool> wr_i_core1;
-	sc_signal<bool> rd_i_core1;
-	sc_signal<int> addr_i_core1;
-	sc_signal<bool> wr_o_core1;
-	sc_signal<float> data_ow_core1;
-	sc_signal<float> data_o_core1;
-	sc_signal<int> data_len_o_core1;
-	sc_signal <float> data_co_core1;
-	sc_signal <bool> wr_co_core1;
-
-	sc_signal<bool> wr_i_core2;
-	sc_signal<bool> rd_i_core2;
-	sc_signal<int> addr_i_core2;
-	sc_signal<bool> wr_o_core2;
-	sc_signal<float> data_ow_core2;
-	sc_signal<float> data_o_core2;
-	sc_signal<int> data_len_o_core2;
-	sc_signal<float> data_co_core2;
-	sc_signal <bool> wr_co_core2;
 
 	sc_signal<bool> wr_i_core[cores_count];
 	sc_signal<bool> rd_i_core[cores_count];
@@ -113,37 +93,18 @@ int sc_main(int argc, char* argv[]) {
 		bus.data_o_IO[i](data_o_IO[i]);
 	}	
 
-	bus.wr_i_core1(wr_i_core1);
-	bus.rd_i_core1(rd_i_core1);
-	bus.addr_i_core1(addr_i_core1);
-	bus.wr_o_core1(wr_o_core1);
-	bus.data_ow_core1(data_ow_core1);
-	bus.data_o_core1(data_o_core1);
-	bus.data_co_core1(data_co_core1);
-	bus.data_len_o_core1(data_len_o_core1);
-	bus.wr_co_core1(wr_co_core1);
-
-	bus.wr_i_core2(wr_i_core2);
-	bus.rd_i_core2(rd_i_core2);
-	bus.addr_i_core2(addr_i_core2);
-	bus.wr_o_core2(wr_o_core2);
-	bus.data_ow_core2(data_ow_core2);
-	bus.data_o_core2(data_o_core2);
-	bus.data_co_core2(data_co_core2);
-	bus.data_len_o_core2(data_len_o_core2);
-	bus.wr_co_core2(wr_co_core2);
-
-	// bus.wr_i_core3(wr_i_core3);
-	// bus.rd_i_core3(rd_i_core3);
-	// bus.addr_i_core3(addr_i_core3);
-	// bus.wr_o_core3(wr_o_core3);
-	// bus.data_ow_core3(data_ow_core3);
-	// for (int i = 0; i < 49; i++)
-	// {
-		
-	// 	bus.data_o_core3[i](data_o_core3[i]);
-	// }
-	// bus.data_len_o_core3(data_len_o_core3);
+	for (int i = 0; i < cores_count; i++)
+	{
+		bus.wr_i_core[i](wr_i_core[i]);
+		bus.rd_i_core[i](rd_i_core[i]);
+		bus.addr_i_core[i](addr_i_core[i]);
+		bus.wr_o_core[i](wr_o_core[i]);
+		bus.data_ow_core[i](data_ow_core[i]);
+		bus.data_o_core[i](data_o_core[i]);
+		bus.data_co_core[i](data_co_core[i]);
+		bus.data_len_o_core[i](data_len_o_core[i]);
+		bus.wr_co_core[i](wr_co_core[i]);
+	}
 
 	bus.wr_i_corelast(wr_i_corelast);
 	bus.rd_i_corelast(rd_i_corelast);
@@ -165,32 +126,6 @@ int sc_main(int argc, char* argv[]) {
 	bus.data_i_mem(data_i_mem);
 	bus.data_o_mem(data_o_mem);
 
-	// CORE 1
-
-	core1.clk_i(clk);
-	core1.wr_ci(wr_o_core1);
-	core1.data_bi(data_ow_core1);
-	core1.data_ci(data_o_core1);
-	core1.wr_co(wr_co_core1);
-	core1.data_co(data_co_core1);
-	core1.rd_bo(rd_i_core1);
-	core1.wr_bo(wr_i_core1);
-	core1.addr_bo(addr_i_core1);
-	core1.data_len(data_len_o_core1);
-	
-	//CORE 2
-
-	core2.clk_i(clk);
-	core2.wr_ci(wr_o_core2);
-	core2.data_bi(data_ow_core2);
-	core2.data_ci(data_o_core2);
-	core2.wr_co(wr_co_core2);
-	core2.data_co(data_co_core2);
-	core2.rd_bo(rd_i_core2);
-	core2.wr_bo(wr_i_core2);
-	core2.addr_bo(addr_i_core2);
-	core2.data_len(data_len_o_core2);
-
 	//CORES
 
 	for (int i = 0; i < cores_count; i++)
@@ -210,10 +145,9 @@ int sc_main(int argc, char* argv[]) {
 	core_last.clk_i(clk);
 	core_last.data_bi(data_ow_corelast);
 	core_last.data_ci(data_ci_corelast);
-	core_last.wr_ci(wr_co_core2);
+	core_last.wr_ci(wr_co_core[cores_count-1]);
 	for (int i(0); i < 3; i++)
 	{
-		
 		core_last.data_bo[i](data_i_corelast[i]);
 	}
 	core_last.rd_bo(rd_i_corelast);

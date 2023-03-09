@@ -70,22 +70,18 @@ SC_MODULE(memory) {
 		// 		}
 		// }
 
-		ifstream fin2("data/weight.txt");
+		ifstream fin2(filename);
 		while (!fin2.eof()) {
-			for (int i(0); i < core1_o_size; i++)
-				for (int j(0); j < core1_i_size; j++)
-				{
-					fin2 >> mem[i+weight_base_addr][j];
-				}
-			for (int i(0); i < core2_o_size; i++)
-				for (int j(0); j < core2_i_size; j++)
-				{
-					fin2 >> mem[i+weight_base_addr*2][j];
-				}
+			for (int n = 0; n < cores_count; n++)
+				for (int i(0); i < cores_o_size[n]; i++)
+					for (int j(0); j < cores_i_size[n]; j++)
+					{
+						fin2 >> mem[i+weight_base_addr*(n+1)][j];
+					}
 			for (int i(0); i < corelast_o_size; i++)
 				for (int j(0); j < corelast_i_size; j++)
 				{
-					fin2 >> mem[i+weight_base_addr*3][j];
+					fin2 >> mem[i+weight_base_addr*(cores_count+1)][j];
 				}
 		}
 	}
@@ -96,22 +92,16 @@ SC_MODULE(memory) {
 		{
 			int addr = addr_bi.read();
 			int core_num = (addr >> 16) & 0x000000ff;
-			if (core_num == 1)
-				data_len.write(core1_i_size);
-			if (core_num == 2)
-				data_len.write(core2_i_size);
-			if (core_num == 3)
+			data_len.write(cores_i_size[core_num-1]);
+			if (core_num == (cores_count+1))
 				data_len.write(corelast_i_size);
 		}
 		if (wr_len_o.read())
 		{
 			int addr = addr_bi.read();
 			int core_num = (addr >> 16) & 0x000000ff;
-			if (core_num == 1)
-				data_len.write(core1_o_size);
-			if (core_num == 2)
-				data_len.write(core2_o_size);
-			if (core_num == 3)
+			data_len.write(cores_o_size[core_num-1]);
+			if (core_num == (cores_count+1))
 				data_len.write(corelast_o_size);
 		}
 	}
