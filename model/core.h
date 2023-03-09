@@ -1,6 +1,5 @@
 #pragma once
 #include "systemc.h"
-#include "main.h"
 #include "IO.h"
 
 SC_MODULE(core) {	
