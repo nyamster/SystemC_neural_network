@@ -33,7 +33,7 @@ int sc_main(int argc, char* argv[]) {
 	sc_signal<float> data_ow_core[cores_count];
 	sc_signal<float> data_o_core[cores_count];
 	sc_signal<int> data_len_o_core[cores_count];
-	sc_signal<float> data_co_core[cores_count];
+	sc_signal<float> data_i_core[cores_count];
 	sc_signal <bool> wr_co_core[cores_count];
 
 	sc_signal<bool> wr_o_mem;
@@ -72,9 +72,8 @@ int sc_main(int argc, char* argv[]) {
 		bus.wr_o_core[i](wr_o_core[i]);
 		bus.data_ow_core[i](data_ow_core[i]);
 		bus.data_o_core[i](data_o_core[i]);
-		bus.data_co_core[i](data_co_core[i]);
+		bus.data_i_core[i](data_i_core[i]);
 		bus.data_len_o_core[i](data_len_o_core[i]);
-		bus.wr_co_core[i](wr_co_core[i]);
 	}
 
 	bus.wr_o_mem(wr_o_mem);
@@ -94,8 +93,7 @@ int sc_main(int argc, char* argv[]) {
 		cores[i].wr_ci(wr_o_core[i]);
 		cores[i].data_bi(data_ow_core[i]);
 		cores[i].data_ci(data_o_core[i]);
-		cores[i].wr_co(wr_co_core[i]);
-		cores[i].data_co(data_co_core[i]);
+		cores[i].data_co(data_i_core[i]);
 		cores[i].rd_bo(rd_i_core[i]);
 		cores[i].wr_bo(wr_i_core[i]);
 		cores[i].addr_bo(addr_i_core[i]);

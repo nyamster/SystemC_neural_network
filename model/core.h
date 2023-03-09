@@ -8,7 +8,6 @@ SC_MODULE(core) {
 	sc_in<bool>  clk_i;
 	sc_in <bool> wr_ci;
 	sc_in <float> data_ci;
-	sc_out <bool> wr_co;
 	sc_out <float> data_co;
 	sc_out<bool> rd_bo;					
 	sc_out<bool> wr_bo;						
@@ -23,7 +22,6 @@ SC_MODULE(core) {
 	// core main method
 	void input_read()
 	{
-		wr_co.write(0);
 		while (!(wr_ci.read()))
 		{
 			wait();
@@ -80,7 +78,6 @@ SC_MODULE(core) {
 		rd_bo.write(1);
 		wait();
 		rd_bo.write(0);
-		wr_co.write(1);
 		wait();
 
 	}
@@ -151,7 +148,6 @@ SC_MODULE(core) {
 		core_num = count;
 
 		addr_bo.initialize(0);
-		wr_co.initialize(0);
 		rd_bo.initialize(0);
 		wr_bo.initialize(0);
 		addr_bo.initialize(0);

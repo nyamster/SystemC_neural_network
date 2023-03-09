@@ -20,12 +20,11 @@ SC_MODULE(bus) {
 	sc_in<bool> wr_i_core[cores_count];
 	sc_in<bool> rd_i_core[cores_count];
 	sc_in<int> addr_i_core[cores_count];
-	sc_in<bool> wr_co_core[cores_count];
 	sc_out<bool> wr_o_core[cores_count];
 	sc_out<float> data_ow_core[cores_count];
 	sc_out<float> data_o_core[cores_count];
 	sc_out<int> data_len_o_core[cores_count];
-	sc_in <float> data_co_core[cores_count];
+	sc_in <float> data_i_core[cores_count];
 
 	sc_out<bool> wr_o_mem;
 	sc_out<bool> wr_len_o_mem;
@@ -136,7 +135,7 @@ SC_MODULE(bus) {
 				{
 					while (!wr_i_core[i].read()) wait();
 					addr_o_mem.write(addr_i_core[i].read());
-					data_o_mem.write(data_co_core[i].read());
+					data_o_mem.write(data_i_core[i].read());
 					// std::cout <<"j: " << i << " " << data_co_core1 << "\n";
 					wr_o_mem.write(1);
 					wait();
