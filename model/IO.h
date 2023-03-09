@@ -2,25 +2,16 @@
 
 #include "systemc.h"
 #include <vector>
-//#include "neural_net/Process.h"
-
-#define train_dim 49
-#define ideal_dim 3
-#define data_dim 52
-#define set_size 3
 
 #define weight_base_addr 49
 #define out_addr 5
 
-#define cores_count 1
+#define cores_count 4
 
-#define corelast_i_size 30
-#define corelast_o_size 3
+const int cores_i_size[] = {49, 9, 5, 3, 3};
+const int cores_o_size[] = {9, 5, 3, 3, 3};
 
-const int cores_i_size[] = {49};
-const int cores_o_size[] = {30};
-
-const std::string filename = "data/weight_old.txt";
+const std::string filename = "data/weight9_5_3.txt";
 
 using namespace std;
 
@@ -29,7 +20,7 @@ SC_MODULE(IO) {
 	sc_in<bool>  clk_i;
 	sc_out <float> data_o;
 	sc_in <bool> wr_i;
-	sc_in<float> data_i[3];	
+	sc_in<float> data_i;	
 	sc_out<bool> rd_bo;	
 	sc_out<bool> wr_bo;						
 	sc_out<int>  addr_bo;			
@@ -55,7 +46,7 @@ SC_MODULE(IO) {
 	{		
 		ifstream fin(file_name);
 		while (!fin.eof()) {
-			for (int i(0); i < train_dim; i++)
+			for (int i(0); i < cores_i_size[0]; i++)
 				fin >> test_arr[i];
 		}
 
@@ -72,25 +63,22 @@ SC_MODULE(IO) {
 			wr_bo.write(0);
 			wait();
 			wait();
-			
-			
 			// std::cout << i << " " << " " << j << " " <<weight[i][j] << "\n";
 		}
-
-		// for_train()
-		// {
-		// 	data_o[i].write(test_arr[i]);
-		// }
 	}
 	void result_predict()
 	{
+		rd_bo.write(1);
 		while (!wr_i.read()) wait();
 		cout << sc_time_stamp() << endl;
-		for (int i(0); i < 3; i++)
+		for (int i(0); i < cores_o_size[cores_count-1]; i++)
 		{
-			prediction[i] = data_i[i].read();
+			while (!wr_i.read()) wait();
+			prediction[i] = data_i.read();
+			wait();
 		}
-		for (int i = 0; i < 3; i++)
+		rd_bo.write(0);
+		for (int i = 0; i < cores_o_size[cores_count-1]; i++)
 		{
 			cout << prediction[i] << " ";
 		}
@@ -107,7 +95,7 @@ SC_MODULE(IO) {
 		send_data("data/test_square.txt");
 		cout << sc_time_stamp() << "  SQUARE" << endl;
 		wait();
-		for (int i = 0; i < 600; i++) wait();
+		for (int i = 0; i < 800; i++) wait();
 		wait();
 		cout << endl << "PREDICTION: " << endl;
 		result_predict();		
@@ -143,8 +131,8 @@ SC_MODULE(IO) {
 			data_o.initialize(0);
 		}
 
-		test_arr.resize(train_dim);
-		prediction.resize(3);
+		test_arr.resize(cores_i_size[0]);
+		prediction.resize(cores_o_size[cores_count-1]);
 
 		SC_CTHREAD(core_write, clk_i.pos());
 

@@ -18,11 +18,6 @@ SC_MODULE(memory) {
 	sc_out<int>  data_len;				// data len
 	sc_out<float>  data_bo;				// writing data
 
-	// int cnt = 0;
-
-	// SC_HAS_PROCESS(memory);
-
-
 	// bus main thread
 	void mem_read()
 	{
@@ -35,23 +30,20 @@ SC_MODULE(memory) {
 			// cout << core_num << endl;
 			// std::cout << "Addr1: " << addr1 << " Addr2: " << addr2 << "\n";
 			data_bo.write(mem[addr1][addr2]);
-			// data_bo[i].write(mem[addr_bi.read()][i]);
 		}			
 	}
 
 	void mem_write()
 	{
 		if (wr_i.read())
-			// for (int i(0); i < 3; i++)
-			{
-				int addr = addr_bi.read();
-				int core_num = (addr >> 16) & 0x000000ff;
-				int addr1 = (addr >> 8) & 0x000000ff;
-				int addr2 = addr & 0x000000ff;
-				mem[addr1][addr2] = data_bi.read();
-				// cout << "Data write: " << data_bi.read() << " " << addr << endl;
-				// cnt++;
-			}	
+		{
+			int addr = addr_bi.read();
+			int core_num = (addr >> 16) & 0x000000ff;
+			int addr1 = (addr >> 8) & 0x000000ff;
+			int addr2 = addr & 0x000000ff;
+			mem[addr1][addr2] = data_bi.read();
+			// cout << "Data write: " << data_bi.read() << " " << addr << endl;
+		}	
 	}
 
 	void read_data()
@@ -61,14 +53,7 @@ SC_MODULE(memory) {
 			for (int n = 0; n < cores_count; n++)
 				for (int i(0); i < cores_o_size[n]; i++)
 					for (int j(0); j < cores_i_size[n]; j++)
-					{
 						fin2 >> mem[i+weight_base_addr*(n+1)][j];
-					}
-			for (int i(0); i < corelast_o_size; i++)
-				for (int j(0); j < corelast_i_size; j++)
-				{
-					fin2 >> mem[i+weight_base_addr*(cores_count+1)][j];
-				}
 		}
 	}
 
@@ -79,33 +64,22 @@ SC_MODULE(memory) {
 			int addr = addr_bi.read();
 			int core_num = (addr >> 16) & 0x000000ff;
 			data_len.write(cores_i_size[core_num-1]);
-			if (core_num == (cores_count+1))
-				data_len.write(corelast_i_size);
 		}
 		if (wr_len_o.read())
 		{
 			int addr = addr_bi.read();
 			int core_num = (addr >> 16) & 0x000000ff;
 			data_len.write(cores_o_size[core_num-1]);
-			if (core_num == (cores_count+1))
-				data_len.write(corelast_o_size);
 		}
 	}
 
 	SC_CTOR(memory) 
 	{
-		// for (int i(0); i < 49; i++)
-		{
-			data_bo.initialize(0);
-		}
+		data_bo.initialize(0);
 		data_len.initialize(0);
 		mem.resize(300);
 		for (int i(0); i < 300; i++)
 			mem[i].resize(49);
-
-		mem2.resize(300);
-		for (int i(0); i < 300; i++)
-			mem2[i].resize(49);
 
 		SC_METHOD(mem_write);
 		sensitive << clk_i.pos();
@@ -116,13 +90,10 @@ SC_MODULE(memory) {
 		SC_METHOD(read_len);
 		sensitive << clk_i.pos();
 
-		// SC_CTHREAD(read_len, clk_i.pos());
-
 		SC_CTHREAD(read_data, clk_i.pos());
 	}
 
 
 private:
 	vector<vector<float>> mem;
-	vector<vector<float>> mem2;
 };

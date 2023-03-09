@@ -46,11 +46,7 @@ SC_MODULE(core) {
 			// cout <<"core: "<< core_num<<" input data: "<< test[i] << endl;
 		}
 		wait();
-
-		// for_train()
-		// {
-		// 	test[i] = (float)data_ci[i].read();
-		// }			
+			
 		for (int i(0); i < out_len; i++)
 		{
 			out_hidden[i] = 0;
@@ -86,15 +82,11 @@ SC_MODULE(core) {
 		rd_bo.write(0);
 		wr_co.write(1);
 		wait();
-		// else
-		// {
-		// 	wr_co.write(0);
-		// }
 
 	}
 	//core main thread
-	void weight_read() {
-		// for (int i = 0; i < (core_num - 1) * 4000; i++) wait();
+	void weight_read()
+	{
 
 		while (!(wr_ci.read()))
 		{
@@ -109,7 +101,7 @@ SC_MODULE(core) {
 		wait();
 		wait();
 		inp_len = data_bi.read();
-		cout << "INPUT LEN: " << inp_len << " " << core_num << endl;
+		// cout << "INPUT LEN: " << inp_len << " " << core_num << endl;
 
 		while (!(wr_ci.read()))
 		{
@@ -125,7 +117,7 @@ SC_MODULE(core) {
 		wait();
 		wait();
 		out_len = data_bi.read();
-		cout << "OUTPUT LEN: " << out_len << " " << core_num << endl;
+		// cout << "OUTPUT LEN: " << out_len << " " << core_num << endl;
 
 		for (int i(0); i < out_len; i++)
 		{
@@ -151,9 +143,6 @@ SC_MODULE(core) {
 		{
 			input_read();
 		}
-		// inp_len = data_len.read();
-		// cout << "Hui: " << inp_len <<endl;
-		// cout << sc_time_stamp() << endl;
 	}
 
 	SC_CTOR(core) {
@@ -175,9 +164,6 @@ SC_MODULE(core) {
 		out_hidden.resize(49);
 		test.resize(49);
 		SC_CTHREAD(weight_read, clk_i.pos());
-		// SC_METHOD(input_read);
-		// sensitive << clk_i.pos();
-
 	}
 
 private:
