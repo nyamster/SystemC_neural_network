@@ -31,7 +31,7 @@ SC_MODULE(core) {
 		// cout <<"core: "<< core_num<<" input: "<<sc_time_stamp() << endl;
 		for (int i = 0; i < inp_len; i++)
 		{
-			int addr = (train_addr + (core_num-1)) << 8;
+			int addr = (out_addr + (core_num-1)) << 8;
 			addr |= i;
 			addr_bo.write(addr);
 			rd_bo.write(1);
@@ -92,6 +92,10 @@ SC_MODULE(core) {
 	void weight_read() {
 		for (int i = 0; i < (core_num - 1) * 4000; i++) wait();
 
+		while (!(wr_ci.read()))
+		{
+			wait();
+		}
 		int addr = core_num << 16;
 		addr_bo.write(addr);
 		rd_bo.write(1);
@@ -103,6 +107,10 @@ SC_MODULE(core) {
 		inp_len = data_bi.read();
 		cout << "INPUT LEN: " << inp_len << " " << core_num << endl;
 
+		while (!(wr_ci.read()))
+		{
+			wait();
+		}
 		addr = core_num << 16;
 		addr_bo.write(addr);
 		rd_bo.write(1);

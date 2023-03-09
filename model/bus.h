@@ -71,6 +71,7 @@ SC_MODULE(bus) {
 		//-------------------------------------------------------------------------------------
 
 		// чтение длины входных данных 1 ядра
+		wr_o_core1.write(1);
 		while (!rd_i_core1.read()) wait();
 		addr_o_mem.write(addr_i_core1.read());
 		wr_len_o_mem.write(1);
@@ -78,8 +79,10 @@ SC_MODULE(bus) {
 		wr_len_o_mem.write(0);
 		wait();
 		data_ow_core1.write(data_len_i_mem.read());
+		wr_o_core1.write(0);
 
 		// чтение длины выходных данных 1 ядра
+		wr_o_core1.write(1);
 		while (!rd_i_core1.read()) wait();
 		addr_o_mem.write(addr_i_core1.read());
 		wr_len_i_mem.write(1);
@@ -89,6 +92,7 @@ SC_MODULE(bus) {
 		float a = data_len_i_mem.read();
 		// std::cout << a << "\n";
 		data_ow_core1.write(a);
+		wr_o_core1.write(0);
 
 		// чтение весов 1 ядра
 		for (int i = 0; i < core1_o_size; i++)
@@ -113,6 +117,7 @@ SC_MODULE(bus) {
 		//-------------------------------------------------------------------------------------
 
 		// // чтение длины входных данных 2 ядра
+		// wr_o_core2.write(1);
 		// while (!rd_i_core2.read()) wait();
 		// addr_o_mem.write(addr_i_core2.read());
 		// wr_len_o_mem.write(1);
@@ -120,8 +125,10 @@ SC_MODULE(bus) {
 		// wr_len_o_mem.write(0);
 		// wait();
 		// data_ow_core2.write(data_len_i_mem.read());
+		// wr_o_core2.write(0);
 
 		// // чтение длины выходных данных 2 ядра
+		// wr_o_core2.write(1);
 		// while (!rd_i_core2.read()) wait();
 		// addr_o_mem.write(addr_i_core2.read());
 		// wr_len_i_mem.write(1);
@@ -131,6 +138,7 @@ SC_MODULE(bus) {
 		// float a = data_len_i_mem.read();
 		// // std::cout << a << "\n";
 		// data_ow_core1.write(a);
+		// wr_o_core2.write(0);
 
 		// // чтение весов 2 ядра
 		// for (int i = 0; i < core2_o_size; i++)
@@ -171,7 +179,7 @@ SC_MODULE(bus) {
 
 		while(true)
 		{
-			while (!wr_i_IO.read()) wait();
+			// запись входных данных
 			for (int i = 0; i < core1_i_size; i++)
 			{
 				while (!wr_i_IO.read()) wait();
@@ -184,6 +192,7 @@ SC_MODULE(bus) {
 				wait();
 			}
 
+			// передача входных данных в 1 ядро
 			wr_o_core1.write(1);
 
 			for (int i = 0; i < core1_i_size; i++)
@@ -198,6 +207,7 @@ SC_MODULE(bus) {
 			}
 			wr_o_core1.write(0);
 
+			// запись выходных данных 1го ядра в память
 			for (int i = 0; i < core1_o_size; i++)
 			{
 				while (!wr_i_core1.read()) wait();
@@ -211,6 +221,36 @@ SC_MODULE(bus) {
 			}
 
 			while (!rd_i_core1.read()) wait();
+
+			// // передача входных данных во 2 ядро
+			// wr_o_core2.write(1);
+
+			// for (int i = 0; i < core2_i_size; i++)
+			// {
+			// 	while (!rd_i_core2.read()) wait();
+			// 	addr_o_mem.write(addr_i_core2.read());
+			// 	rd_o_mem.write(1);
+			// 	wait();
+			// 	rd_o_mem.write(0);
+			// 	wait();
+			// 	data_o_core2.write(data_i_mem.read());
+			// }
+			// wr_o_core1.write(0);
+
+			// // запись выходных данных 2го ядра в память
+			// for (int i = 0; i < core2_o_size; i++)
+			// {
+			// 	while (!wr_i_core2.read()) wait();
+			// 	addr_o_mem.write(addr_i_core2.read());
+			// 	data_o_mem.write(data_co_core2.read());
+			// 	// std::cout <<"j: " << i << " " << data_co_core1[0] << "\n";
+			// 	wr_o_mem.write(1);
+			// 	wait();
+			// 	wr_o_mem.write(0);
+			// 	wait();
+			// }
+
+			// while (!rd_i_core2.read()) wait();
 
 			for (int i = 0; i < corelast_i_size; i++)
 			{
