@@ -12,15 +12,15 @@
 #define weight_base_addr 49
 #define out_addr 5
 
-#define cores_count 1
+#define cores_count 2
 
 #define core1_i_size 49
-#define core1_o_size 30
+#define core1_o_size 10
 
 #define core2_i_size 10
 #define core2_o_size 5
 
-#define corelast_i_size 30
+#define corelast_i_size 5
 #define corelast_o_size 3
 
 #define for_data() for(int i(0); i < data_dim; i++)
@@ -42,26 +42,14 @@ SC_MODULE(IO) {
 	vector<float> test_arr;
 	vector<float> prediction;
 
-	vector<int> convert(vector<float> out) {
-		vector<int> int_out(out.size());
-		for (int i(0); i < int_out.size(); i++) {
-			if (out[i] > 0.90)
-				int_out[i] = 1;
-			else
-				int_out[i] = 0;
-		}
-
-		return int_out;
-	}
-
-	void parsing_result(vector<int> out) {
-		if (out[0] == 1 && out[1] == 0 && out[2] == 0)
+	void parsing_result(vector<float> out) {
+		if (out[0] > out[1] && out[0] > out[2])
 			cout << "CIRCLE";
 
-		else if (out[0] == 0 && out[1] == 1 && out[2] == 0)
+		else if (out[1] > out[0] && out[1] > out[2])
 			cout << "SQUARE";
 
-		else if (out[0] == 0 && out[1] == 0 && out[2] == 1)
+		else if (out[2] > out[1] && out[2] > out[0])
 			cout << "TRIANGLE";
 
 		else
@@ -112,7 +100,7 @@ SC_MODULE(IO) {
 			cout << prediction[i] << " ";
 		}
 		cout << endl;
-		parsing_result(convert(prediction));
+		parsing_result(prediction);
 		cout << endl;
 	}
 

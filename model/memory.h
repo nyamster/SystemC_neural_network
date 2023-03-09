@@ -56,36 +56,36 @@ SC_MODULE(memory) {
 
 	void read_data()
 	{
-		ifstream fin("data/weight_old.txt");
-		while (!fin.eof()) {
-			for (int i(0); i < 30; i++)
-				for (int j(0); j < 49; j++)
-				{
-					fin >> mem[i+weight_base_addr][j];
-				}
-			for (int i(0); i < 3; i++)
-				for (int j(0); j < 30; j++)
-				{
-					fin >> mem[i+weight_base_addr*2][j];
-				}
-		}
+		// ifstream fin("data/weight_old.txt");
+		// while (!fin.eof()) {
+		// 	for (int i(0); i < 30; i++)
+		// 		for (int j(0); j < 49; j++)
+		// 		{
+		// 			fin >> mem[i+weight_base_addr][j];
+		// 		}
+		// 	for (int i(0); i < 3; i++)
+		// 		for (int j(0); j < 30; j++)
+		// 		{
+		// 			fin >> mem[i+weight_base_addr*2][j];
+		// 		}
+		// }
 
 		ifstream fin2("data/weight.txt");
 		while (!fin2.eof()) {
 			for (int i(0); i < 10; i++)
 				for (int j(0); j < 49; j++)
 				{
-					fin2 >> mem2[i+weight_base_addr][j];
+					fin2 >> mem[i+weight_base_addr][j];
 				}
 			for (int i(0); i < 5; i++)
 				for (int j(0); j < 10; j++)
 				{
-					fin2 >> mem2[i+weight_base_addr*2][j];
+					fin2 >> mem[i+weight_base_addr*2][j];
 				}
 			for (int i(0); i < 3; i++)
 				for (int j(0); j < 5; j++)
 				{
-					fin2 >> mem2[i+weight_base_addr*3][j];
+					fin2 >> mem[i+weight_base_addr*3][j];
 				}
 		}
 	}

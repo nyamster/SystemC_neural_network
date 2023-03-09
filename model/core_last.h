@@ -67,6 +67,7 @@ SC_MODULE(core_last) {
 				wait();
 				wait();
 				data_neuron[i] = (float)data_ci.read();
+				// cout <<"core last input data: "<< data_neuron[i] << " " << i << endl;
 			}
 			wait();
 			// for (int i(0); i < 30; i++)
@@ -96,7 +97,7 @@ SC_MODULE(core_last) {
 			for (int j = 0; j < corelast_i_size; j++)
 			{
 				int addr = (i+weight_base_addr*(cores_count+1)) << 8;
-				// cout << i+(core_num-1)*10 << endl;
+				// cout << i+weight_base_addr*(cores_count+1) << endl;
 				addr |= j;
 				addr_bo.write(addr);
 				rd_bo.write(1);

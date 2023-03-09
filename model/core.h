@@ -28,10 +28,12 @@ SC_MODULE(core) {
 		{
 			wait();
 		}
+		// cout << "INPUT LEN2: " << inp_len << " " << core_num << endl;
 		// cout <<"core: "<< core_num<<" input: "<<sc_time_stamp() << endl;
 		for (int i = 0; i < inp_len; i++)
 		{
 			int addr = (out_addr + (core_num-1)) << 8;
+			// cout <<"core: "<< core_num<<" input: "<< (out_addr + (core_num-1)) << " " << i << endl;
 			addr |= i;
 			addr_bo.write(addr);
 			rd_bo.write(1);
@@ -41,6 +43,7 @@ SC_MODULE(core) {
 			wait();
 			wait();
 			test[i] = (float)data_ci.read();
+			// cout <<"core: "<< core_num<<" input data: "<< test[i] << endl;
 		}
 		wait();
 
@@ -61,6 +64,7 @@ SC_MODULE(core) {
 		for (int i(0); i < out_len; i++)
 		{
 			int addr = (out_addr + core_num) << 8;
+			// cout <<"core: "<< core_num<<" output: "<< (out_addr + core_num) << " " << i << endl;
 			// cout << i+(core_num-1)*10 << endl;
 			addr |= i;
 			addr_bo.write(addr);
@@ -72,7 +76,7 @@ SC_MODULE(core) {
 			wait();
 			wait();
 
-			
+			// cout <<"core: "<< core_num<<" output data: "<< out_hidden[i] << endl;
 			// data_co[i].write(out_hidden[i]);
 			// cout << out_hidden[i] << endl;
 		}
@@ -117,6 +121,7 @@ SC_MODULE(core) {
 		wait();
 		wait();
 		rd_bo.write(0);
+		wait();
 		wait();
 		wait();
 		out_len = data_bi.read();

@@ -203,7 +203,7 @@ int sc_main(int argc, char* argv[]) {
 	core_last.clk_i(clk);
 	core_last.data_bi(data_ow_corelast);
 	core_last.data_ci(data_ci_corelast);
-	core_last.wr_ci(wr_co_core1);
+	core_last.wr_ci(wr_co_core2);
 	for (int i(0); i < 3; i++)
 	{
 		
