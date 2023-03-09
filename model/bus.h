@@ -28,13 +28,15 @@ SC_MODULE(bus) {
 	sc_in <float> data_co_core1;
 	
 
-	// sc_in<bool> wr_i_core2;
-	// sc_in<bool> rd_i_core2;
-	// sc_in<int> addr_i_core2;
-	// sc_out<bool> wr_o_core2;
-	// sc_out<float> data_ow_core2;
-	// sc_out<float> data_o_core2[49];
-	// sc_out<int> data_len_o_core2;
+	sc_in<bool> wr_i_core2;
+	sc_in<bool> rd_i_core2;
+	sc_in<int> addr_i_core2;
+	sc_in<bool> wr_co_core2;
+	sc_out<bool> wr_o_core2;
+	sc_out<float> data_ow_core2;
+	sc_out<float> data_o_core2;
+	sc_out<int> data_len_o_core2;
+	sc_in <float> data_co_core2;
 
 	// sc_in<bool> wr_i_core3;
 	// sc_in<bool> rd_i_core3;
@@ -53,6 +55,7 @@ SC_MODULE(bus) {
 
 	sc_out<bool> wr_o_mem;
 	sc_out<bool> wr_len_o_mem;
+	sc_out<bool> wr_len_i_mem;
 	sc_in<int> data_len_i_mem;
 	sc_out<bool> rd_o_mem;
 	sc_out<int> addr_o_mem;
@@ -63,7 +66,31 @@ SC_MODULE(bus) {
 	// bus main thread
 	void bus_process()
 	{
-		// for (int i = 0; i < 100; i++) wait();
+		//-------------------------------------------------------------------------------------
+		//	1 ЯДРО
+		//-------------------------------------------------------------------------------------
+
+		// чтение длины входных данных 1 ядра
+		while (!rd_i_core1.read()) wait();
+		addr_o_mem.write(addr_i_core1.read());
+		wr_len_o_mem.write(1);
+		wait();
+		wr_len_o_mem.write(0);
+		wait();
+		data_ow_core1.write(data_len_i_mem.read());
+
+		// чтение длины выходных данных 1 ядра
+		while (!rd_i_core1.read()) wait();
+		addr_o_mem.write(addr_i_core1.read());
+		wr_len_i_mem.write(1);
+		wait();
+		wr_len_i_mem.write(0);
+		wait();
+		float a = data_len_i_mem.read();
+		// std::cout << a << "\n";
+		data_ow_core1.write(a);
+
+		// чтение весов 1 ядра
 		for (int i = 0; i < core1_o_size; i++)
 		{
 			for (int j = 0; j < core1_i_size; j++)
@@ -71,27 +98,44 @@ SC_MODULE(bus) {
 				while (!rd_i_core1.read()) wait();
 				addr_o_mem.write(addr_i_core1.read());
 				rd_o_mem.write(1);
-				// wr_len_o_mem.write(1);
 				wait();
 				rd_o_mem.write(0);
-				// wr_len_o_mem.write(0);
 				wait();
 				float a = data_i_mem.read();
 				// std::cout << a << "\n";
 				data_ow_core1.write(a);
 			}
-			
-			// std::cout << i << std::endl;
-
-			// data_len_o_core1.write(data_len_i_mem.read());
-			// data_len_o_core2.write(data_len_i_mem.read());
-			// data_len_o_core3.write(data_len_i_mem.read());
 		}
-
 		cout << sc_time_stamp() << "  CORE1" << endl;
-		// for (int i = 0; i < 10; i++)
+
+		//-------------------------------------------------------------------------------------
+		//	2 ЯДРО
+		//-------------------------------------------------------------------------------------
+
+		// // чтение длины входных данных 2 ядра
+		// while (!rd_i_core2.read()) wait();
+		// addr_o_mem.write(addr_i_core2.read());
+		// wr_len_o_mem.write(1);
+		// wait();
+		// wr_len_o_mem.write(0);
+		// wait();
+		// data_ow_core2.write(data_len_i_mem.read());
+
+		// // чтение длины выходных данных 2 ядра
+		// while (!rd_i_core2.read()) wait();
+		// addr_o_mem.write(addr_i_core2.read());
+		// wr_len_i_mem.write(1);
+		// wait();
+		// wr_len_i_mem.write(0);
+		// wait();
+		// float a = data_len_i_mem.read();
+		// // std::cout << a << "\n";
+		// data_ow_core1.write(a);
+
+		// // чтение весов 2 ядра
+		// for (int i = 0; i < core2_o_size; i++)
 		// {
-		// 	for (int j = 0; j < 49; j++)
+		// 	for (int j = 0; j < core2_i_size; j++)
 		// 	{
 		// 		while (!rd_i_core2.read()) wait();
 		// 		addr_o_mem.write(addr_i_core2.read());
@@ -99,27 +143,16 @@ SC_MODULE(bus) {
 		// 		wait();
 		// 		rd_o_mem.write(0);
 		// 		wait();
-		// 		data_ow_core2.write(data_i_mem.read());
-		// 		// std::cout << data_i_mem.read() << "\n";
+		// 		float a = data_i_mem.read();
+		// 		// std::cout << a << "\n";
+		// 		data_ow_core2.write(a);
 		// 	}
 		// }
 		// cout << sc_time_stamp() << "  CORE2" << endl;
-		// for (int i = 0; i < 10; i++)
-		// {
-		// 	for (int j = 0; j < 49; j++)
-		// 	{
-		// 		while (!rd_i_core3.read()) wait();
-		// 		addr_o_mem.write(addr_i_core3.read());
-		// 		rd_o_mem.write(1);
-		// 		wait();
-		// 		rd_o_mem.write(0);
-		// 		wait();
-		// 		data_ow_core3.write(data_i_mem.read());
-		// 		// std::cout << data_i_mem.read() << "\n";
-		// 	}
-		// }
-		// cout << sc_time_stamp() << "  CORE3" << endl;
 
+		//-------------------------------------------------------------------------------------
+		//	ПОСЛЕДНЕЕ ЯДРО
+		//-------------------------------------------------------------------------------------
 		for (int i = 0; i < corelast_o_size; i++)
 		{
 			for (int j = 0; j < corelast_i_size; j++)
@@ -158,14 +191,10 @@ SC_MODULE(bus) {
 				while (!rd_i_core1.read()) wait();
 				addr_o_mem.write(addr_i_core1.read());
 				rd_o_mem.write(1);
-				// wr_len_o_mem.write(1);
 				wait();
 				rd_o_mem.write(0);
-				// wr_len_o_mem.write(0);
 				wait();
-				float a = data_i_mem.read();
-				
-				data_o_core1.write(a);
+				data_o_core1.write(data_i_mem.read());
 			}
 			wr_o_core1.write(0);
 
@@ -188,10 +217,8 @@ SC_MODULE(bus) {
 				while (!rd_i_corelast.read()) wait();
 				addr_o_mem.write(addr_i_corelast.read());
 				rd_o_mem.write(1);
-				// wr_len_o_mem.write(1);
 				wait();
 				rd_o_mem.write(0);
-				// wr_len_o_mem.write(0);
 				wait();
 				float a = data_i_mem.read();
 				// cout << a << endl;

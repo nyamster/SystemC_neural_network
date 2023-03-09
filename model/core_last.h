@@ -9,7 +9,7 @@ SC_MODULE(core_last) {
 
 	sc_in<bool>  clk_i;
 	sc_in <float> data_ci;
-	sc_in<bool>	 wr_ci[corelast_o_size];						// reading input flag
+	sc_in<bool>	 wr_ci;						// reading input flag
 	sc_out <float> data_bo[corelast_o_size];	
 	sc_out<bool> rd_bo;						// reading input flag
 	sc_out<bool> wr_bo;						// writing output flag
@@ -53,11 +53,11 @@ SC_MODULE(core_last) {
 	// core main method
 	void input_read()
 	{
-		while (!(wr_ci[0].read()/* && wr_ci[1].read() && wr_ci[2].read()*/)) wait();
+		while (!(wr_ci.read()/* && wr_ci[1].read() && wr_ci[2].read()*/)) wait();
 		{
 			for (int i = 0; i < corelast_i_size; i++)
 			{
-				int addr = (out_addr + cores_count) << 16;
+				int addr = (out_addr + cores_count) << 8;
 				addr |= i;
 				addr_bo.write(addr);
 				rd_bo.write(1);
@@ -95,7 +95,7 @@ SC_MODULE(core_last) {
 		{
 			for (int j = 0; j < corelast_i_size; j++)
 			{
-				int addr = (i+corelast_i_size) << 16;
+				int addr = (i+weight_base_addr*(cores_count+1)) << 8;
 				// cout << i+(core_num-1)*10 << endl;
 				addr |= j;
 				addr_bo.write(addr);

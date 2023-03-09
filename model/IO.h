@@ -9,8 +9,9 @@
 #define data_dim 52
 #define set_size 3
 
-#define train_addr 50
-#define out_addr 55
+#define weight_base_addr 49
+#define train_addr 0
+#define out_addr 5
 
 #define cores_count 1
 
@@ -78,7 +79,7 @@ SC_MODULE(IO) {
 
 		for (int i = 0; i < 49; i++)
 		{
-			int addr = train_addr << 16;
+			int addr = train_addr << 8;
 			// cout << i+(core_num-1)*10 << endl;
 			addr |= i;
 			addr_bo.write(addr);

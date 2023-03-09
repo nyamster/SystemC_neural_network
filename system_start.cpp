@@ -14,7 +14,7 @@ int sc_main(int argc, char* argv[]) {
 
 	IO IO("IOput");
 	bus bus("bus");
-	core core1("core1");//,core2("core2"),core3("core3");
+	core core1("core1"),core2("core2");//,core3("core3");
 	core_last core_last("core_last");
 	memory memory("memory");
 	
@@ -36,14 +36,17 @@ int sc_main(int argc, char* argv[]) {
 	sc_signal<float> data_o_core1;
 	sc_signal<int> data_len_o_core1;
 	sc_signal <float> data_co_core1;
+	sc_signal <bool> wr_co_core1;
 
-	// sc_signal<bool> wr_i_core2;
-	// sc_signal<bool> rd_i_core2;
-	// sc_signal<int> addr_i_core2;
-	// sc_signal<bool> wr_o_core2;
-	// sc_signal<float> data_ow_core2;
-	// sc_signal<float> data_o_core2[49];
-	// sc_signal<int> data_len_o_core2;
+	sc_signal<bool> wr_i_core2;
+	sc_signal<bool> rd_i_core2;
+	sc_signal<int> addr_i_core2;
+	sc_signal<bool> wr_o_core2;
+	sc_signal<float> data_ow_core2;
+	sc_signal<float> data_o_core2;
+	sc_signal<int> data_len_o_core2;
+	sc_signal<float> data_co_core2;
+	sc_signal <bool> wr_co_core2;
 
 	// sc_signal<bool> wr_i_core3;
 	// sc_signal<bool> rd_i_core3;
@@ -62,13 +65,14 @@ int sc_main(int argc, char* argv[]) {
 
 	sc_signal<bool> wr_o_mem;
 	sc_signal<bool> wr_len_o_mem;
+	sc_signal<bool> wr_len_i_mem;
 	sc_signal<int>  data_len_i_mem;
 	sc_signal<bool> rd_o_mem;
 	sc_signal<int> addr_o_mem;
 	sc_signal<float> data_i_mem;
 	sc_signal<float> data_o_mem;
 
-	sc_signal <bool> wr_co_core[3];
+	// sc_signal <bool> wr_co_core[3];
 	
 	//INPUT
 
@@ -106,19 +110,17 @@ int sc_main(int argc, char* argv[]) {
 	bus.data_o_core1(data_o_core1);
 	bus.data_co_core1(data_co_core1);
 	bus.data_len_o_core1(data_len_o_core1);
-	bus.wr_co_core1(wr_co_core[0]);
+	bus.wr_co_core1(wr_co_core1);
 
-	// bus.wr_i_core2(wr_i_core2);
-	// bus.rd_i_core2(rd_i_core2);
-	// bus.addr_i_core2(addr_i_core2);
-	// bus.wr_o_core2(wr_o_core2);
-	// bus.data_ow_core2(data_ow_core2);
-	// for (int i = 0; i < 49; i++)
-	// {
-		
-	// 	bus.data_o_core2[i](data_o_core2[i]);
-	// }
-	// bus.data_len_o_core2(data_len_o_core2);
+	bus.wr_i_core2(wr_i_core2);
+	bus.rd_i_core2(rd_i_core2);
+	bus.addr_i_core2(addr_i_core2);
+	bus.wr_o_core2(wr_o_core2);
+	bus.data_ow_core2(data_ow_core2);
+	bus.data_o_core2(data_o_core2);
+	bus.data_co_core2(data_co_core2);
+	bus.data_len_o_core2(data_len_o_core2);
+	bus.wr_co_core2(wr_co_core2);
 
 	// bus.wr_i_core3(wr_i_core3);
 	// bus.rd_i_core3(rd_i_core3);
@@ -145,6 +147,7 @@ int sc_main(int argc, char* argv[]) {
 
 	bus.wr_o_mem(wr_o_mem);
 	bus.wr_len_o_mem(wr_len_o_mem);
+	bus.wr_len_i_mem(wr_len_i_mem);
 	bus.data_len_i_mem(data_len_i_mem);
 	bus.rd_o_mem(rd_o_mem);
 	bus.addr_o_mem(addr_o_mem);
@@ -156,38 +159,26 @@ int sc_main(int argc, char* argv[]) {
 	core1.clk_i(clk);
 	core1.wr_ci(wr_o_core1);
 	core1.data_bi(data_ow_core1);
-	// for_train()
-	{
-		
-		core1.data_ci(data_o_core1);
-	}
-	core1.wr_co(wr_co_core[0]);
+	core1.data_ci(data_o_core1);
+	core1.wr_co(wr_co_core1);
 	core1.data_co(data_co_core1);
 	core1.rd_bo(rd_i_core1);
 	core1.wr_bo(wr_i_core1);
 	core1.addr_bo(addr_i_core1);
-
 	core1.data_len(data_len_o_core1);
 	
 	//CORE 2
 
-	// core2.clk_i(clk);
-	// core2.wr_ci(wr_o_core2);
-	// core2.data_bi(data_ow_core2);
-	// for_train()
-	// {
-	// 	core2.data_ci[i](data_o_core2[i]);
-	// }
-	// core2.wr_co(wr_co_core[1]);
-	// for (int i(0); i < 10; i++)
-	// {
-	// 	core2.data_co[i](data_co_core[i+10]);
-	// }
-	// core2.rd_bo(rd_i_core2);
-	// core2.wr_bo(wr_i_core2);
-	// core2.addr_bo(addr_i_core2);
-
-	// core2.data_len(data_len_o_core2);
+	core2.clk_i(clk);
+	core2.wr_ci(wr_o_core2);
+	core2.data_bi(data_ow_core2);
+	core2.data_ci(data_o_core2);
+	core2.wr_co(wr_co_core2);
+	core2.data_co(data_co_core2);
+	core2.rd_bo(rd_i_core2);
+	core2.wr_bo(wr_i_core2);
+	core2.addr_bo(addr_i_core2);
+	core2.data_len(data_len_o_core2);
 
 	//CORE 3
 
@@ -212,9 +203,10 @@ int sc_main(int argc, char* argv[]) {
 	core_last.clk_i(clk);
 	core_last.data_bi(data_ow_corelast);
 	core_last.data_ci(data_ci_corelast);
+	core_last.wr_ci(wr_co_core1);
 	for (int i(0); i < 3; i++)
 	{
-		core_last.wr_ci[i](wr_co_core[i]);
+		
 		core_last.data_bo[i](data_i_corelast[i]);
 	}
 	core_last.rd_bo(rd_i_corelast);
@@ -231,7 +223,8 @@ int sc_main(int argc, char* argv[]) {
 		memory.data_bi(data_o_mem);
 	}
 	memory.rd_i(rd_o_mem);
-	memory.wr_len(wr_len_o_mem);
+	memory.wr_len_i(wr_len_o_mem);
+	memory.wr_len_o(wr_len_i_mem);
 	memory.data_len(data_len_i_mem);	
 	memory.wr_i(wr_o_mem);
 	memory.data_bo(data_i_mem);

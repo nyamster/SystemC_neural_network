@@ -29,9 +29,9 @@ SC_MODULE(core) {
 			wait();
 		}
 		// cout <<"core: "<< core_num<<" input: "<<sc_time_stamp() << endl;
-		for (int i = 0; i < core1_i_size; i++)
+		for (int i = 0; i < inp_len; i++)
 		{
-			int addr = (train_addr + (core_num-1)) << 16;
+			int addr = (train_addr + (core_num-1)) << 8;
 			addr |= i;
 			addr_bo.write(addr);
 			rd_bo.write(1);
@@ -48,19 +48,19 @@ SC_MODULE(core) {
 		// {
 		// 	test[i] = (float)data_ci[i].read();
 		// }			
-		for (int i(0); i < core1_o_size; i++)
+		for (int i(0); i < out_len; i++)
 		{
 			out_hidden[i] = 0;
-			for (int j(0); j < core1_i_size; j++)
+			for (int j(0); j < inp_len; j++)
 			{
 				out_hidden[i] += test[j] * weight[i][j];
 			}
 			out_hidden[i] = 1 / (1 + exp(-out_hidden[i]));
 		}
 		
-		for (int i(0); i < core1_o_size; i++)
+		for (int i(0); i < out_len; i++)
 		{
-			int addr = (out_addr + core_num) << 16;
+			int addr = (out_addr + core_num) << 8;
 			// cout << i+(core_num-1)*10 << endl;
 			addr |= i;
 			addr_bo.write(addr);
@@ -91,13 +91,37 @@ SC_MODULE(core) {
 	//core main thread
 	void weight_read() {
 		for (int i = 0; i < (core_num - 1) * 4000; i++) wait();
-		for (int i(0); i < core1_o_size; i++)
+
+		int addr = core_num << 16;
+		addr_bo.write(addr);
+		rd_bo.write(1);
+		wait();
+		wait();
+		rd_bo.write(0);
+		wait();
+		wait();
+		inp_len = data_bi.read();
+		cout << "INPUT LEN: " << inp_len << " " << core_num << endl;
+
+		addr = core_num << 16;
+		addr_bo.write(addr);
+		rd_bo.write(1);
+		wait();
+		wait();
+		rd_bo.write(0);
+		wait();
+		wait();
+		out_len = data_bi.read();
+		cout << "OUTPUT LEN: " << out_len << " " << core_num << endl;
+
+		for (int i(0); i < out_len; i++)
 		{
-			for (int j = 0; j < core1_i_size; j++)
+			for (int j = 0; j < inp_len; j++)
 			{
-				int addr = i << 16;
-				// cout << i+(core_num-1)*10 << endl;
-				addr |= j;
+				int addr = core_num << 16;
+				addr |= ((i+core_num*weight_base_addr) << 8) & 0x0000ff00;
+				// cout << (i+core_num*weight_base_addr) << endl;
+				addr |= j & 0x000000ff;
 				addr_bo.write(addr);
 				rd_bo.write(1);
 				wait();
@@ -130,13 +154,13 @@ SC_MODULE(core) {
 		wr_bo.initialize(0);
 		addr_bo.initialize(0);
 		data_co.initialize(0);
-		weight.resize(core1_o_size);
-		for(int i(0);i<core1_o_size;i++)
+		weight.resize(49);
+		for(int i(0);i<49;i++)
 		{
-			weight[i].resize(core1_i_size);
+			weight[i].resize(49);
 		}
-		out_hidden.resize(core1_o_size);
-		test.resize(core1_i_size);
+		out_hidden.resize(49);
+		test.resize(49);
 		SC_CTHREAD(weight_read, clk_i.pos());
 		// SC_METHOD(input_read);
 		// sensitive << clk_i.pos();
@@ -148,6 +172,7 @@ private:
 	vector<float> out_hidden;
 	vector<float> test;
 	int inp_len;
+	int out_len;
 };
 
 int core::count = 0;
