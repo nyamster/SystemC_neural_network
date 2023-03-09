@@ -20,7 +20,7 @@ SC_MODULE(core_last) {
 	// print float prediction
 	void get_prediction() {
 		cout << "Prediction: ";
-		for_ideal()
+		for (int i = 0; i < 3; i++)
 			cout << prediction[i] << " ";
 		cout << endl;
 	}

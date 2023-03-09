@@ -22,10 +22,6 @@ const int cores_o_size[] = {30};
 
 const std::string filename = "data/weight_old.txt";
 
-#define for_data() for(int i(0); i < data_dim; i++)
-#define for_train() for(int i(0); i < train_dim; i++)
-#define for_ideal() for(int i(0); i < ideal_dim; i++)
-
 using namespace std;
 
 SC_MODULE(IO) {
