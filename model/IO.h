@@ -6,12 +6,12 @@
 #define weight_base_addr 49
 #define out_addr 5
 
-#define cores_count 4
+#define cores_count 3
 
-const int cores_i_size[] = {49, 9, 5, 3, 3};
-const int cores_o_size[] = {9, 5, 3, 3, 3};
+const int cores_i_size[] = {49, 10, 5, 3};
+const int cores_o_size[] = {10, 5, 3};
 
-const std::string filename = "data/weight9_5_3.txt";
+const std::string filename = "data/weight10_5.txt";
 
 using namespace std;
 

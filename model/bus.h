@@ -47,6 +47,7 @@ SC_MODULE(bus) {
 		int core_out_len[cores_count];
 		for (int i = 0; i < cores_count; i++)
 		{
+			
 			// чтение длины входных данных ядра
 			wr_o_core[i].write(1);
 			while (!rd_i_core[i].read()) wait();
@@ -97,6 +98,7 @@ SC_MODULE(bus) {
 		while(true)
 		{
 			// запись входных данных
+			
 			for (int i = 0; i < core_inp_len[0]; i++)
 			{
 				while (!wr_i_IO.read()) wait();
@@ -108,6 +110,7 @@ SC_MODULE(bus) {
 				wr_o_mem.write(0);
 				wait();
 			}
+			auto start = sc_time_stamp();
 			// wr_o_IO.write(0);
 
 			
@@ -144,7 +147,7 @@ SC_MODULE(bus) {
 				}
 
 				while (!rd_i_core[i].read()) wait();
-				// cout << sc_time_stamp()-start << " END CORE: " << i << endl;
+				
 			}
 
 			// запись выходных данных в устройство вывода
@@ -167,9 +170,8 @@ SC_MODULE(bus) {
 				wr_o_IO.write(0);
 				// cout << data_i_mem.read() << endl;
 			}
+			cout << sc_time_stamp()-start << " END" << endl;
 		}
-		
-
 	}
 
 	SC_CTOR(bus) {
