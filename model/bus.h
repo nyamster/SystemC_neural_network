@@ -152,7 +152,9 @@ SC_MODULE(bus) {
 
 			// запись выходных данных в устройство вывода
 
+			cout << sc_time_stamp()-start << " время вычисления" << endl;
 			while (!rd_i_IO.read()) wait();
+			
 
 			for (int i = 0; i < core_out_len[cores_count-1]; i++)
 			{
@@ -170,7 +172,7 @@ SC_MODULE(bus) {
 				wr_o_IO.write(0);
 				// cout << data_i_mem.read() << endl;
 			}
-			cout << sc_time_stamp()-start << " END" << endl;
+			
 		}
 	}
 

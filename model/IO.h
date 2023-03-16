@@ -8,10 +8,10 @@
 
 #define cores_count 3
 
-const int cores_i_size[] = {49, 10, 5, 3};
-const int cores_o_size[] = {10, 5, 3};
+const int cores_i_size[] = {49, 16, 4, 3};
+const int cores_o_size[] = {16, 4, 3};
 
-const std::string filename = "data/weight10_5.txt";
+const std::string filename = "data/weight16_4.txt";
 
 using namespace std;
 
@@ -29,6 +29,7 @@ SC_MODULE(IO) {
 	vector<float> prediction;
 
 	void parsing_result(vector<float> out) {
+		cout << "Результат: ";
 		if (out[0] > out[1] && out[0] > out[2])
 			cout << "CIRCLE";
 
@@ -70,7 +71,7 @@ SC_MODULE(IO) {
 	{
 		rd_bo.write(1);
 		while (!wr_i.read()) wait();
-		cout << sc_time_stamp() << endl;
+		cout << "Текущее время: " << sc_time_stamp() << endl;
 		for (int i(0); i < cores_o_size[cores_count-1]; i++)
 		{
 			while (!wr_i.read()) wait();
@@ -78,6 +79,7 @@ SC_MODULE(IO) {
 			wait();
 		}
 		rd_bo.write(0);
+		cout << "Выходные данные: ";
 		for (int i = 0; i < cores_o_size[cores_count-1]; i++)
 		{
 			cout << prediction[i] << " ";
